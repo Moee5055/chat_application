@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @unique @default(cuid())
+  email             String    @unique
+  password          String
+  mobile_number     String    @unique
+  firstname         String
+  lastname          String
+  isOnline          String
+  profilePictureUrl String?   @default("")
+  chatId1           Chat[]    @relation("UserChats1")
+  chatId2           Chat[]    @relation("UserChats2")
+  message           Message[]
+}
+
+model Chat {
+  id      String    @unique @default(cuid())
+  userId1 String
+  userId2 String
+  message Message[]
+  user1   User      @relation("UserChats1", fields: [userId1], references: [id], onDelete: Cascade)
+  user2   User      @relation("UserChats2", fields: [userId2], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id        String   @unique @default(cuid())
+  text      String
+  senderId  String
+  fileUrl   String?  @default("")
+  chatId    String
+  seen      Boolean  @default(false)
+  delivered Boolean  @default(false)
+  createdAt DateTime @default(now())
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User     @relation(fields: [senderId], references: [id])
+}

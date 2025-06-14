@@ -1,9 +1,3 @@
-import { Client } from "pg";
+import { PrismaClient } from "../generated/prisma";
 
-export const pool = new Client({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-  port: Number(process.env.DB_PORT),
-  host: process.env.DB_HOST,
-});
+export const prisma = new PrismaClient();
