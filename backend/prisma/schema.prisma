@@ -21,7 +21,7 @@ model User {
   mobile_number     String    @unique
   firstname         String
   lastname          String
-  isOnline          String
+  isOnline          Boolean   @default(false)
   profilePictureUrl String?   @default("")
   chatId1           Chat[]    @relation("UserChats1")
   chatId2           Chat[]    @relation("UserChats2")
