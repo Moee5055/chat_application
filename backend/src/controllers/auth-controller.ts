@@ -42,15 +42,6 @@ export const handleUserSignup: RequestHandler = async (
   } = parseResult.data;
 
   try {
-    const userAlreadyExists = await prisma.user.findFirst({
-      where: { email },
-    });
-
-    if (userAlreadyExists) {
-      res.status(400).json({ error: "User already exists with this email" });
-      return;
-    }
-
     const newUser = await prisma.user.create({
       data: {
         email,
@@ -62,7 +53,6 @@ export const handleUserSignup: RequestHandler = async (
         isOnline: isOnline ?? false,
       },
     });
-
     res.status(201).json({ message: "User created", user: newUser });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
