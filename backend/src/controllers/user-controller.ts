@@ -7,7 +7,6 @@ export const checkUserExist: RequestHandler = async (
   req: Request,
   res: Response,
 ) => {
-  console.log(req.body);
   const { email } = req.body;
   if (!email) {
     res.status(400).json({ error: "Email is required" });
@@ -22,6 +21,7 @@ export const checkUserExist: RequestHandler = async (
       res.status(400).json({ error: "User already exists with this email" });
       return;
     }
+    res.status(200).json({ message: "User is available" });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.log("Primsa Error: ", error.code);
