@@ -3,6 +3,7 @@ import { PrismaClientKnownRequestError } from "../generated/prisma/runtime/libra
 import { z } from "zod";
 
 import { prisma } from "../config/db";
+import { hashPassword } from "../helper/hashpassword";
 
 //zod schema
 const signupSchema = z.object({
@@ -28,6 +29,7 @@ export const handleUserSignup: RequestHandler = async (
       error: "Invalid input",
       details: parseResult.error.flatten().fieldErrors,
     });
+    console.log("Error paring data: ", parseResult.error.flatten().fieldErrors);
     return;
   }
 
@@ -42,10 +44,11 @@ export const handleUserSignup: RequestHandler = async (
   } = parseResult.data;
 
   try {
+    const hashedPassword = await hashPassword(password);
     const newUser = await prisma.user.create({
       data: {
         email,
-        password, // 🔒 Consider hashing this before saving
+        password: hashedPassword, // 🔒 Consider hashing this before saving
         firstname,
         lastname,
         mobile_number,
