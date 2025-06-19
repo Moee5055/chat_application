@@ -5,6 +5,7 @@ import { z } from "zod";
 import { prisma } from "../config/db";
 import { hashPassword } from "../helper/hashpassword";
 import { comparePasswords } from "../helper/verifyPassword";
+import { generateToken, type JWTPayload } from "../helper/jwt";
 
 //zod schema
 const signupSchema = z.object({
@@ -111,8 +112,17 @@ export const handleUserLogin: RequestHandler = async (
       return;
     }
     //jwt token
-    console.log("You are login");
-    res.json({ message: "You are login and get token" });
+    const payload: JWTPayload = {
+      id: user.id,
+      email: user.email,
+    };
+    const token = generateToken(payload);
+    res.cookie("token", token, {
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+      sameSite: "strict",
+    });
+    res.json({ message: "Login Sucessfull" });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.log("Prisma error:", error.message);
