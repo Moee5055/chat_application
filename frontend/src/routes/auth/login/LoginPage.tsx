@@ -6,6 +6,7 @@ export default function LoginPage() {
       className="min-w-sm max-w-md"
       cardTitle="Login to your account"
       cardDescription="Enter your email below to login to your account"
+      linkName="Signup"
       buttonValue="Login"
     />
   );
