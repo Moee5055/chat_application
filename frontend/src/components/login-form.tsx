@@ -16,6 +16,7 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardDescription: string;
   buttonValue: string;
   linkName: string;
+  submitForm: () => void;
 }
 
 export function LoginForm({
@@ -24,6 +25,7 @@ export function LoginForm({
   cardDescription,
   buttonValue,
   linkName,
+  submitForm,
   ...props
 }: LoginFormProps) {
   return (
