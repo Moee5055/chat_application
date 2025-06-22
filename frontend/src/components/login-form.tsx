@@ -9,6 +9,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { type HTMLAttributes } from "react";
+
+interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
+  cardTitle: string;
+  cardDescription: string;
+  buttonValue: string;
+  linkName: string;
+}
 
 export function LoginForm({
   className,
@@ -17,7 +25,7 @@ export function LoginForm({
   buttonValue,
   linkName,
   ...props
-}: React.ComponentProps<"div">) {
+}: LoginFormProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
