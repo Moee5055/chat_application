@@ -16,7 +16,11 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardDescription: string;
   buttonValue: string;
   linkName: string;
-  submitForm: () => void;
+  formAction: (formData: FormData) => void | Promise<void>;
+  errors?: {
+    email?: string;
+    password?: string;
+  };
 }
 
 export function LoginForm({
@@ -25,7 +29,8 @@ export function LoginForm({
   cardDescription,
   buttonValue,
   linkName,
-  submitForm,
+  formAction,
+  errors,
   ...props
 }: LoginFormProps) {
   return (
@@ -36,12 +41,13 @@ export function LoginForm({
           <CardDescription>{cardDescription}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form action={formAction}>
             <div className="flex flex-col gap-6">
               <div className="grid gap-3">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
@@ -57,7 +63,7 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" type="password" name="password" required />
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
