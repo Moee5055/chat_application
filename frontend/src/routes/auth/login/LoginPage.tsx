@@ -3,8 +3,11 @@ import { LoginForm } from "@/components/login-form";
 
 import { type ActionResult, AuthSchema as LoginSchema } from "../authUtils";
 import { useActionState } from "react";
+import { useNavigate } from "react-router";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+
   const handleLoginForm = (
     prevData: ActionResult,
     formData: FormData,
@@ -33,7 +36,7 @@ export default function LoginPage() {
     toast.success("Submit Successfully.", {
       position: "top-center",
     });
-
+    navigate("/");
     return {
       success: true,
     };

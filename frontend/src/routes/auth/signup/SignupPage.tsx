@@ -1,4 +1,5 @@
 import { useActionState } from "react";
+import { useNavigate } from "react-router";
 
 import { LoginForm as SignupForm } from "@/components/login-form";
 import { toast } from "sonner";
@@ -6,6 +7,8 @@ import { toast } from "sonner";
 import { type ActionResult, AuthSchema as SignupSchema } from "../authUtils";
 
 export default function SignupPage() {
+  const navigate = useNavigate();
+
   const handleSignupForm = (
     prevData: ActionResult,
     formData: FormData,
@@ -34,7 +37,7 @@ export default function SignupPage() {
     toast.success("Submit Successfully.", {
       position: "top-center",
     });
-
+    navigate("/");
     return {
       success: true,
     };
@@ -44,7 +47,7 @@ export default function SignupPage() {
     handleSignupForm,
     { success: false },
   );
-
+  console.log(message);
   return (
     <SignupForm
       className="min-w-sm max-w-md"

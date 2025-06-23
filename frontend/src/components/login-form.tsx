@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type HTMLAttributes } from "react";
+import { Link } from "react-router";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardTitle: string;
@@ -78,9 +79,9 @@ export function LoginForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}
-              <a href="#" className="underline underline-offset-4">
-                {linkName}
-              </a>
+              <Link to={`/auth/${linkName.toLowerCase()}`}>
+                <span className="underline underline-offset-4">{linkName}</span>
+              </Link>
             </div>
           </form>
         </CardContent>
