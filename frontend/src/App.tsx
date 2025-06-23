@@ -3,6 +3,7 @@ import IndexPage from "./routes/index/IndexPage";
 import LoginPage from "./routes/auth/login/LoginPage";
 import AuthLayout from "./routes/auth/AuthLayout";
 import SignupPage from "./routes/auth/signup/SignupPage";
+import { InputOTPControlled } from "./routes/auth/verification/InputOTPControlled";
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <Route path="auth" element={<AuthLayout />}>
         <Route path="login" element={<LoginPage />} />
         <Route path="signup" element={<SignupPage />} />
+        <Route path="signup/verification" element={<InputOTPControlled />} />
       </Route>
     </Routes>
   );

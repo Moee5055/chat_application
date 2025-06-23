@@ -37,7 +37,7 @@ export default function SignupPage() {
     toast.success("Submit Successfully.", {
       position: "top-center",
     });
-    navigate("/");
+    navigate("/auth/signup/verification");
     return {
       success: true,
     };
