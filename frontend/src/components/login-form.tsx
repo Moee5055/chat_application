@@ -64,9 +64,14 @@ export function LoginForm({
                   </a>
                 </div>
                 <Input id="password" type="password" name="password" required />
+                {errors?.password && (
+                  <span className="text-sm text-red-500">
+                    {errors.password}
+                  </span>
+                )}
               </div>
               <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full cursor-pointer">
                   {buttonValue}
                 </Button>
               </div>

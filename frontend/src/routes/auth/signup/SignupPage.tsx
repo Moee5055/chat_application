@@ -2,10 +2,24 @@ import { useActionState } from "react";
 import { z } from "zod";
 
 import { LoginForm as SignupForm } from "@/components/login-form";
+import { toast } from "sonner";
+
+const passwordSchema = z
+  .string()
+  .min(6, "Password must be at least 6 characters")
+  .refine((val) => /[a-z]/.test(val), {
+    message: "Password must contain at least one lowercase letter",
+  })
+  .refine((val) => /[A-Z]/.test(val), {
+    message: "Password must contain at least one uppercase letter",
+  })
+  .refine((val) => /[^A-Za-z0-9]/.test(val), {
+    message: "Password must contain at least one special character",
+  });
 
 const SignupSchema = z.object({
   email: z.string().email("Invalid email format"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: passwordSchema,
 });
 
 type ActionResult = {
@@ -30,7 +44,9 @@ export default function SignupPage() {
 
     if (!result.success) {
       const fieldErrors = result.error.flatten().fieldErrors;
-
+      toast.error("Error Submitting Form", {
+        position: "top-center",
+      });
       return {
         success: false,
         errors: {
@@ -39,6 +55,9 @@ export default function SignupPage() {
         },
       };
     }
+    toast.success("Submit Successfully.", {
+      position: "top-center",
+    });
 
     return {
       success: true,
