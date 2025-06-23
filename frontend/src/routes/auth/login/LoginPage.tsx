@@ -1,9 +1,48 @@
+import { toast } from "sonner";
 import { LoginForm } from "@/components/login-form";
 
+import { type ActionResult, AuthSchema as LoginSchema } from "../authUtils";
+import { useActionState } from "react";
+
 export default function LoginPage() {
-  const handleLoginForm = () => {
-    console.log("api request to /api/auth/login");
+  const handleLoginForm = (
+    prevData: ActionResult,
+    formData: FormData,
+  ): ActionResult => {
+    const rawData = {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    };
+
+    const result = LoginSchema.safeParse(rawData);
+
+    if (!result.success) {
+      const fieldErrors = result.error.flatten().fieldErrors;
+      toast.error("Error Submitting Form", {
+        position: "top-center",
+      });
+      return {
+        success: false,
+        errors: {
+          email: fieldErrors.email?.[0],
+          password: fieldErrors.password?.[0],
+        },
+      };
+    }
+    //TODO: handle post request send user data to database
+    toast.success("Submit Successfully.", {
+      position: "top-center",
+    });
+
+    return {
+      success: true,
+    };
   };
+
+  const [message, formAction] = useActionState<ActionResult, FormData>(
+    handleLoginForm,
+    { success: false },
+  );
 
   return (
     <LoginForm
@@ -12,6 +51,8 @@ export default function LoginPage() {
       cardDescription="Enter your email below to login to your account"
       linkName="Signup"
       buttonValue="Login"
+      formAction={formAction}
+      errors={message.errors}
     />
   );
 }
