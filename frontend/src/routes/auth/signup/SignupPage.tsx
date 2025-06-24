@@ -6,9 +6,31 @@ import { toast } from "sonner";
 
 import { type ActionResult, AuthSchema as SignupSchema } from "../utils";
 
+export let email = "";
+
 export default function SignupPage() {
   const [emailVerified, setEmailVerified] = useState(false);
   const navigate = useNavigate();
+
+  const handleEmailCheck = async (formData: FormData): Promise<void> => {
+    email = formData.get("email") as string;
+
+    const result = SignupSchema.pick({ email: true }).safeParse({ email });
+    if (!result.success) {
+      const emailError = result.error.flatten().fieldErrors.email?.[0];
+      toast.error(emailError || "Invalid email");
+      return;
+    }
+
+    // TODO: check from database if email already exists
+    const exists = false; // simulate with false for now if true reset email.
+
+    if (exists) {
+      toast.error("User Already Exits.");
+      return;
+    }
+    setEmailVerified(true);
+  };
 
   const handleSignupForm = async (
     prevData: ActionResult,
@@ -60,6 +82,7 @@ export default function SignupPage() {
       formAction={formAction}
       errors={message.errors}
       verified={emailVerified}
+      emailFormAction={handleEmailCheck}
     />
   );
 }

@@ -11,7 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type HTMLAttributes } from "react";
 import { Link } from "react-router";
+
 import PasswordField from "./passwordfield";
+import { email } from "@/routes/auth/signup/SignupPage";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardTitle: string;
@@ -19,6 +21,7 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   buttonValue: string;
   linkName: string;
   formAction: (formData: FormData) => void | Promise<void>;
+  emailFormAction: (formData: FormData) => void | Promise<void>;
   errors?: {
     email?: string;
     password?: string;
@@ -34,6 +37,7 @@ export function LoginForm({
   linkName,
   formAction,
   errors,
+  emailFormAction,
   verified = false,
   ...props
 }: LoginFormProps) {
@@ -53,6 +57,7 @@ export function LoginForm({
                   id="email"
                   name="email"
                   type="email"
+                  defaultValue={email}
                   placeholder="m@example.com"
                   required
                 />
@@ -76,8 +81,13 @@ export function LoginForm({
                   </div>
                 </>
               ) : (
-                <div className="flex flex-col gap-3">
-                  <Button className="w-full cursor-pointer">Next</Button>
+                <div className="flex flex-col gap-3 ">
+                  <Button
+                    formAction={emailFormAction}
+                    className="cursor-pointer"
+                  >
+                    Next
+                  </Button>
                 </div>
               )}
             </div>
