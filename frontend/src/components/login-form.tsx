@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { type HTMLAttributes } from "react";
 import { Link } from "react-router";
+import PasswordField from "./passwordfield";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardTitle: string;
@@ -22,6 +23,7 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
     email?: string;
     password?: string;
   };
+  verified?: boolean;
 }
 
 export function LoginForm({
@@ -32,6 +34,7 @@ export function LoginForm({
   linkName,
   formAction,
   errors,
+  verified = false,
   ...props
 }: LoginFormProps) {
   return (
@@ -54,28 +57,29 @@ export function LoginForm({
                   required
                 />
               </div>
-              <div className="grid gap-3">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+              {buttonValue.toLowerCase() === "login" ? (
+                <>
+                  <PasswordField errors={errors} />
+                  <div className="flex flex-col gap-3">
+                    <Button type="submit" className="w-full cursor-pointer">
+                      {buttonValue}
+                    </Button>
+                  </div>
+                </>
+              ) : verified && buttonValue.toLowerCase() === "sign up" ? (
+                <>
+                  <PasswordField errors={errors} />
+                  <div className="flex flex-col gap-3">
+                    <Button type="submit" className="w-full cursor-pointer">
+                      {buttonValue}
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <Button className="w-full cursor-pointer">Next</Button>
                 </div>
-                <Input id="password" type="password" name="password" required />
-                {errors?.password && (
-                  <span className="text-sm text-red-500">
-                    {errors.password}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col gap-3">
-                <Button type="submit" className="w-full cursor-pointer">
-                  {buttonValue}
-                </Button>
-              </div>
+              )}
             </div>
             <div className="mt-4 text-center text-sm">
               Don&apos;t have an account?{" "}

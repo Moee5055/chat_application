@@ -25,3 +25,15 @@ export type ActionResult = {
     password?: string;
   };
 };
+
+export const countries = [
+  { code: "+977", flag: "🇳🇵" },
+  { code: "+91", flag: "🇮🇳" },
+  { code: "+880", flag: "🇧🇩" },
+  { code: "+92", flag: "🇵🇰" },
+  { code: "+94", flag: "🇱🇰" },
+  { code: "+960", flag: "🇲🇻" },
+  { code: "+975", flag: "🇧🇹" },
+  { code: "+65", flag: "🇸🇬" },
+  { code: "+1", flag: "🇺🇸" },
+];

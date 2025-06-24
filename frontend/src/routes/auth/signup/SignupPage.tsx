@@ -1,18 +1,19 @@
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useNavigate } from "react-router";
 
 import { LoginForm as SignupForm } from "@/components/login-form";
 import { toast } from "sonner";
 
-import { type ActionResult, AuthSchema as SignupSchema } from "../authUtils";
+import { type ActionResult, AuthSchema as SignupSchema } from "../utils";
 
 export default function SignupPage() {
+  const [emailVerified, setEmailVerified] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignupForm = (
+  const handleSignupForm = async (
     prevData: ActionResult,
     formData: FormData,
-  ): ActionResult => {
+  ): Promise<ActionResult> => {
     const rawData = {
       email: formData.get("email") as string,
       password: formData.get("password") as string,
@@ -34,6 +35,7 @@ export default function SignupPage() {
       };
     }
     //TODO: handle post request send user data to database
+
     toast.success("Submit Successfully.", {
       position: "top-center",
     });
@@ -57,6 +59,7 @@ export default function SignupPage() {
       linkName="Login"
       formAction={formAction}
       errors={message.errors}
+      verified={emailVerified}
     />
   );
 }

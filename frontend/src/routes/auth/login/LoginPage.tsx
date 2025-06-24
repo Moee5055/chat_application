@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 import { LoginForm } from "@/components/login-form";
 
-import { type ActionResult, AuthSchema as LoginSchema } from "../authUtils";
+import { type ActionResult, AuthSchema as LoginSchema } from "../utils";
 import { useActionState } from "react";
 import { useNavigate } from "react-router";
 
