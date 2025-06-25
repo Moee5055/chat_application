@@ -18,13 +18,14 @@ export const checkUserExist: RequestHandler = async (
     });
 
     if (userAlreadyExists) {
-      res.status(400).json({ error: "User already exists with this email" });
+      res.status(200).json({ error: "User already exists with this email" });
       return;
     }
     res.status(200).json({ message: "User is available" });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.log("Primsa Error: ", error.code);
+      res.status(500).json({ error: "Unexpected error occurred" });
     }
     if (error instanceof Error) {
       console.error("Unexpected error:", error.message);

@@ -1,5 +1,6 @@
 import { useActionState, useState } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
 
 import { LoginForm as SignupForm } from "@/components/login-form";
 import { toast } from "sonner";
@@ -22,12 +23,34 @@ export default function SignupPage() {
       return;
     }
 
-    // TODO: check from database if email already exists
-    const exists = false; // simulate with false for now if true reset email.
+    try {
+      const { data } = await axios.post(
+        "http://localhost:5000/api/user_exist",
+        {
+          email,
+        },
+      );
+      if (data.error) {
+        toast.error("User with this email already Exits");
+        return;
+      }
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        const errorMessage =
+          err.response?.data?.message || "Something went wrong";
 
-    if (exists) {
-      toast.error("User Already Exits.");
-      return;
+        if (status === 400) {
+          toast.error("Email is required");
+        } else if (status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error("Unknown error occurred");
+        console.error(err);
+      }
     }
     setEmailVerified(true);
   };
@@ -56,7 +79,9 @@ export default function SignupPage() {
         },
       };
     }
-    //TODO: handle post request send user data to database
+
+    localStorage.setItem("email", rawData.email);
+    localStorage.setItem("password", rawData.password);
 
     toast.success("Submit Successfully.", {
       position: "top-center",
@@ -71,7 +96,7 @@ export default function SignupPage() {
     handleSignupForm,
     { success: false },
   );
-  console.log(message);
+
   return (
     <SignupForm
       className="min-w-sm max-w-md"
