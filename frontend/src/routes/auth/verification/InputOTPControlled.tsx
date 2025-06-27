@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 import {
   InputOTP,
@@ -9,9 +10,50 @@ import {
 import { Button } from "@/components/ui/button";
 import { UserLock } from "lucide-react";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export function InputOTPControlled() {
+  const navigate = useNavigate();
   const [value, setValue] = useState("");
+
+  const handleVerifyCode = async () => {
+    const email = localStorage.getItem("email");
+    console.log("handleVerifycode");
+    console.log(value);
+    try {
+      const response = await axios.post(`${backendUrl}/auth/verifyCode`, {
+        email,
+        verificationCode: value,
+      });
+      if (response.data?.status === "400") {
+        toast.error(response.data?.error, {
+          position: "top-center",
+        });
+        return;
+      }
+      navigate("/auth/signup/create-new-user");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
+
+        if (status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error("Unknown error occurred");
+        console.error(error);
+      }
+    }
+  };
+
+  const handleResendCode = async () => {};
 
   return (
     <Card>
@@ -46,10 +88,13 @@ export function InputOTPControlled() {
           </InputOTP>
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          <Button className="w-full cursor-pointer">Verify Code</Button>
+          <Button className="w-full cursor-pointer" onClick={handleVerifyCode}>
+            Verify Code
+          </Button>
           <Button
             variant="secondary"
             className="w-full cursor-pointer hover:bg-gray-200"
+            onClick={handleResendCode}
           >
             Resend Code
           </Button>

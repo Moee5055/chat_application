@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { type ActionResult, AuthSchema as SignupSchema } from "../utils";
 
 export let email = "";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 export default function SignupPage() {
   const [emailVerified, setEmailVerified] = useState(false);
@@ -24,21 +25,19 @@ export default function SignupPage() {
     }
 
     try {
-      const { data } = await axios.post(
-        "http://localhost:5000/api/user_exist",
-        {
-          email,
-        },
-      );
+      const { data } = await axios.post(`${backendUrl}/user_exist`, {
+        email,
+      });
       if (data.error) {
         toast.error("User with this email already Exits");
         return;
       }
+      setEmailVerified(true);
     } catch (err) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
         const errorMessage =
-          err.response?.data?.message || "Something went wrong";
+          err.response?.data?.error || "Something went wrong";
 
         if (status === 400) {
           toast.error("Email is required");
@@ -52,7 +51,6 @@ export default function SignupPage() {
         console.error(err);
       }
     }
-    setEmailVerified(true);
   };
 
   const handleSignupForm = async (
@@ -82,11 +80,30 @@ export default function SignupPage() {
 
     localStorage.setItem("email", rawData.email);
     localStorage.setItem("password", rawData.password);
+    try {
+      await axios.post(`${backendUrl}/auth/sendVerificationCode`, {
+        email,
+      });
+      toast.success("Submit Successfully.", {
+        position: "top-center",
+      });
+      navigate("/auth/signup/verification");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+        const errorMessage =
+          error.response?.data?.error || "Something went wrong";
 
-    toast.success("Submit Successfully.", {
-      position: "top-center",
-    });
-    navigate("/auth/signup/verification");
+        if (status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else {
+          toast.error(errorMessage);
+        }
+      } else {
+        toast.error("Unknown error occurred");
+        console.error(error);
+      }
+    }
     return {
       success: true,
     };

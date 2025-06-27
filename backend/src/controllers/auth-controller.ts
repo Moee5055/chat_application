@@ -6,6 +6,8 @@ import { prisma } from "../config/db";
 import { hashPassword } from "../helper/hashpassword";
 import { comparePasswords } from "../helper/verifyPassword";
 import { generateToken, type JWTPayload } from "../helper/jwt";
+import { generateVerificationCode } from "../helper/generateCode";
+import { sendVerificationToken } from "../helper/sendVerficationEmail";
 
 //zod schema
 const signupSchema = z.object({
@@ -135,5 +137,106 @@ export const handleUserLogin: RequestHandler = async (
       return;
     }
     res.status(500).json({ error: "Unknown error" });
+  }
+};
+
+export const handleSendVerificationCode: RequestHandler = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const { email } = req.body;
+    const code = generateVerificationCode();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+    const response = await prisma.userVerification.findUnique({
+      where: {
+        email,
+      },
+    });
+    if (response) {
+      await prisma.userVerification.delete({
+        where: {
+          id: response.id,
+        },
+      });
+    }
+    await prisma.userVerification.create({
+      data: {
+        email,
+        verificationCode: code,
+        expiryTime: expiresAt,
+      },
+    });
+    await sendVerificationToken(code, email);
+    res.json({ message: "Verfication Code sent to Email" });
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.log("Prisma error:", error.message);
+      res.json(500).json({ error: "Unexpected error occured." });
+      return;
+    }
+
+    if (error instanceof Error) {
+      console.error("Unexpected error:", error.message);
+      res.status(500).json({ error: "Unexpected error occurred" });
+      return;
+    }
+    console.log(error);
+    res.status(500).json({ error: "Unknow error occured" });
+  }
+};
+
+type VerificationTableType = {
+  id: string;
+  email: string;
+  expiryTime: Date;
+  verificationCode: string;
+} | null;
+
+export const handleVerificationCode: RequestHandler = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const {
+      email,
+      verificationCode,
+    }: { email: string; verificationCode: string } = req.body;
+    const response: VerificationTableType =
+      await prisma.userVerification.findFirst({
+        where: {
+          email,
+        },
+      });
+    if (response && response.verificationCode === verificationCode) {
+      if (!(response.expiryTime > new Date())) {
+        res
+          .status(400)
+          .json({ error: "Verfication Code is Expired, Resend Again" });
+        return;
+      }
+      await prisma.userVerification.delete({
+        where: {
+          id: response.id,
+        },
+      });
+      res.status(200).json({ success: true });
+    } else {
+      res.status(400).json({ error: "Invalid Code." });
+    }
+  } catch (error) {
+    if (error instanceof PrismaClientKnownRequestError) {
+      console.log("Prisma error:", error.message);
+      res.json(500).json({ error: "Unexpected error occured." });
+      return;
+    }
+
+    if (error instanceof Error) {
+      console.error("Unexpected error:", error.message);
+      res.status(500).json({ error: "Unexpected error occurred" });
+      return;
+    }
+    console.log(error);
+    res.status(500).json({ error: "Unknow error occurred" });
   }
 };

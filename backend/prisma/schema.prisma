@@ -26,6 +26,7 @@ model User {
   chatId1           Chat[]    @relation("UserChats1")
   chatId2           Chat[]    @relation("UserChats2")
   message           Message[]
+  createdAt         DateTime  @default(now())
 }
 
 model Chat {
@@ -48,4 +49,11 @@ model Message {
   createdAt DateTime @default(now())
   chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
   sender    User     @relation(fields: [senderId], references: [id])
+}
+
+model UserVerification {
+  id               String   @unique @default(cuid())
+  email            String   @unique
+  verificationCode String
+  expiryTime       DateTime @default(now())
 }
