@@ -17,7 +17,7 @@ const signupSchema = z.object({
   lastname: z.string(),
   mobile_number: z.string(),
   profilePictureUrl: z.string().url().optional(),
-  isOnline: z.boolean().optional(),
+  bio: z.string().optional(),
 });
 
 const loginSchema = z.object({
@@ -48,7 +48,7 @@ export const handleUserSignup: RequestHandler = async (
     lastname,
     mobile_number,
     profilePictureUrl,
-    isOnline,
+    bio,
   } = parseResult.data;
 
   try {
@@ -61,14 +61,15 @@ export const handleUserSignup: RequestHandler = async (
         lastname,
         mobile_number,
         profilePictureUrl: profilePictureUrl ?? "",
-        isOnline: isOnline ?? false,
+        isOnline: true,
+        bio,
       },
     });
     res.status(201).json({ message: "User created", user: newUser });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.log("Prisma error:", error.message);
-      res.status(500).json({ error: "Database error" });
+      res.status(500).json({ error: "Server Error" });
       return;
     }
     if (error instanceof Error) {

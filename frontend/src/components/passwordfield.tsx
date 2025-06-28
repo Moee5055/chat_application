@@ -3,8 +3,10 @@ import { Input } from "./ui/input";
 
 export default function PasswordField({
   errors,
+  isLogin,
 }: {
   errors?: { password?: string };
+  isLogin: boolean;
 }) {
   return (
     <div className="grid gap-3">
@@ -14,7 +16,7 @@ export default function PasswordField({
           href="#"
           className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
         >
-          Forgot your password?
+          {isLogin && "Forgot your password?"}
         </a>
       </div>
       <Input id="password" type="password" name="password" required />

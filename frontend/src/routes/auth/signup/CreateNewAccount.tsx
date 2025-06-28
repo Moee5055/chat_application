@@ -1,4 +1,6 @@
 import { useState } from "react";
+import axios from "axios";
+
 import { Input } from "@/components/ui/input"; // Assuming you're using shadcn/ui or your custom input
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -6,14 +8,69 @@ import { Button } from "@/components/ui/button";
 import { CountrySelect } from "./CountrySelect";
 
 import { countries } from "../utils";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
+
+const email = localStorage.getItem("email") ?? "";
+const backend_URL = import.meta.env.VITE_BACKEND_URL;
+
+type UserAccount = {
+  email: string;
+  firstname: string;
+  lastname: string;
+  bio?: string;
+  mobile_number: string;
+};
 
 export default function CreateNewAccount() {
   const [country, setCountry] = useState(countries[0]);
+  const navigate = useNavigate();
 
-  const handleSubmit = (formData: FormData) => {
-    // handle form data
-    console.log(formData.get("email"));
-    console.log(formData.get("phone"));
+  const handleSubmit = async (formData: FormData) => {
+    const rawFormData: UserAccount = {
+      email: formData.get("email"),
+      firstname: formData.get("firstName"),
+      lastname: formData.get("lastName"),
+      bio: formData.get("bio") ?? "",
+      mobile_number: formData.get("phone"),
+      password: localStorage.getItem("password"),
+    } as UserAccount;
+
+    try {
+      const user = await axios.post(`${backend_URL}/auth/sign-up`, rawFormData);
+      if (!user) {
+        throw new Error("Error creating User.");
+      }
+      localStorage.clear();
+      navigate("/auth/login");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.code === "ENOTFOUND") {
+          toast.error("Network error: Host not found");
+          return;
+        } else if (error.code === "ECONNREFUSED") {
+          toast.error("Connection refused");
+          return;
+        } else if (error.code === "ECONNABORTED") {
+          toast.error("Request timeout");
+          return;
+        } else if (error.code === "ERR_NETWORK") {
+          toast.error(error.message);
+          return;
+        }
+        const status = error.response?.status;
+        if (status === 500) {
+          toast.error("Server error. Please try again later.");
+          return;
+        } else {
+          toast.error(error.response?.data?.error);
+          return;
+        }
+      }
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   return (
@@ -44,7 +101,7 @@ export default function CreateNewAccount() {
           id="email"
           name="email"
           type="email"
-          placeholder="john@example.com"
+          defaultValue={email}
           required
         />
       </div>

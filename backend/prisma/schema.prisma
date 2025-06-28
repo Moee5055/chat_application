@@ -19,6 +19,7 @@ model User {
   email             String    @unique
   password          String
   mobile_number     String    @unique
+  bio               String    @default("")
   firstname         String
   lastname          String
   isOnline          Boolean   @default(false)

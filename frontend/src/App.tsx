@@ -17,6 +17,7 @@ export default function App() {
         <Route path="signup/verification" element={<InputOTPControlled />} />
         <Route path="signup/create-new-user" element={<CreateNewAccount />} />
       </Route>
+      <Route path="/chats" element={<div>This is chat</div>} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

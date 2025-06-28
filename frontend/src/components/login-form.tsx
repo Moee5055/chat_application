@@ -21,7 +21,7 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   buttonValue: string;
   linkName: string;
   formAction: (formData: FormData) => void | Promise<void>;
-  emailFormAction: (formData: FormData) => void | Promise<void>;
+  emailFormAction?: (formData: FormData) => void | Promise<void>;
   errors?: {
     email?: string;
     password?: string;
@@ -41,6 +41,7 @@ export function LoginForm({
   verified = false,
   ...props
 }: LoginFormProps) {
+  const isLogin = buttonValue.toLowerCase() === "login";
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -64,7 +65,7 @@ export function LoginForm({
               </div>
               {buttonValue.toLowerCase() === "login" ? (
                 <>
-                  <PasswordField errors={errors} />
+                  <PasswordField errors={errors} isLogin={isLogin} />
                   <div className="flex flex-col gap-3">
                     <Button type="submit" className="w-full cursor-pointer">
                       {buttonValue}
@@ -73,7 +74,7 @@ export function LoginForm({
                 </>
               ) : verified && buttonValue.toLowerCase() === "sign up" ? (
                 <>
-                  <PasswordField errors={errors} />
+                  <PasswordField errors={errors} isLogin={isLogin} />
                   <div className="flex flex-col gap-3">
                     <Button type="submit" className="w-full cursor-pointer">
                       {buttonValue}
