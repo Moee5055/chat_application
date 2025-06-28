@@ -32,7 +32,9 @@ export default function LoginPage() {
         },
       };
     }
-    //TODO: handle post request send user data to database
+
+    try {
+    } catch (error) {}
     toast.success("Submit Successfully.", {
       position: "top-center",
     });
@@ -51,7 +53,7 @@ export default function LoginPage() {
     <LoginForm
       className="min-w-sm max-w-md"
       cardTitle="Login to your account"
-      cardDescription="Enter your email below to login to your account"
+      cardDescription="Enter your email or mobile number below to login to your account"
       linkName="Signup"
       buttonValue="Login"
       formAction={formAction}

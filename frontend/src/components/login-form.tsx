@@ -14,6 +14,7 @@ import { Link } from "react-router";
 
 import PasswordField from "./passwordfield";
 import { email } from "@/routes/auth/signup/SignupPage";
+import MultipleLogin from "@/routes/auth/login/MultipleLogin";
 
 interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   cardTitle: string;
@@ -52,17 +53,21 @@ export function LoginForm({
         <CardContent>
           <form action={formAction}>
             <div className="flex flex-col gap-6">
-              <div className="grid gap-3">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  defaultValue={email}
-                  placeholder="m@example.com"
-                  required
-                />
-              </div>
+              {isLogin ? (
+                <MultipleLogin />
+              ) : (
+                <div className="grid gap-3">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    defaultValue={email}
+                    placeholder="m@example.com"
+                    required
+                  />
+                </div>
+              )}
               {buttonValue.toLowerCase() === "login" ? (
                 <>
                   <PasswordField errors={errors} isLogin={isLogin} />
