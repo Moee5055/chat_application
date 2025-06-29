@@ -21,9 +21,9 @@ const signupSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string().email().optional(),
+  email: z.string().optional().nullable(),
   password: z.string().min(6),
-  mobile_number: z.string().optional(),
+  phone: z.string().optional().nullable(),
 });
 
 export const handleUserSignup: RequestHandler = async (
@@ -91,18 +91,25 @@ export const handleUserLogin: RequestHandler = async (
       error: "Invalid input",
       details: parseResult.error.flatten().fieldErrors,
     });
-    console.log("Error paring data: ", parseResult.error.flatten().fieldErrors);
+    console.log(
+      "Error parsing data: ",
+      parseResult.error.flatten().fieldErrors,
+    );
     return;
   }
-  const { email, mobile_number, password } = parseResult.data;
+  const { email, phone: mobile_number, password } = parseResult.data;
   if (!email && !mobile_number) {
     res.status(400).json({ error: "mobile_number or email required." });
     return;
   }
+  const whereCondition = [];
+  if (email) whereCondition.push({ email });
+  if (mobile_number) whereCondition.push({ mobile_number });
+
   try {
     const user = await prisma.user.findFirst({
       where: {
-        email,
+        OR: whereCondition,
       },
     });
     if (!user) {
@@ -125,6 +132,7 @@ export const handleUserLogin: RequestHandler = async (
       maxAge: 24 * 60 * 60 * 1000, // 1 day
       sameSite: "strict",
     });
+    console.log(token, "token send");
     res.json({ message: "Login Sucessfull" });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {

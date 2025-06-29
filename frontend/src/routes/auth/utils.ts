@@ -13,7 +13,17 @@ export const passwordSchema = z
     message: "Password must contain at least one special character",
   });
 
-export const AuthSchema = z.object({
+export const LoginSchema = z.object({
+  email: z.string().optional(),
+  phone: z
+    .string()
+    .regex(/^\d{10}$/, "Invalid mobile number")
+    .optional()
+    .nullable(),
+  password: passwordSchema,
+});
+
+export const SignupSchema = z.object({
   email: z.string().email("Invalid email format"),
   password: passwordSchema,
 });
@@ -23,6 +33,7 @@ export type ActionResult = {
   errors?: {
     email?: string;
     password?: string;
+    phone?: string;
   };
 };
 

@@ -26,6 +26,7 @@ interface LoginFormProps extends HTMLAttributes<HTMLDivElement> {
   errors?: {
     email?: string;
     password?: string;
+    phone?: string;
   };
   verified?: boolean;
 }
@@ -54,7 +55,7 @@ export function LoginForm({
           <form action={formAction}>
             <div className="flex flex-col gap-6">
               {isLogin ? (
-                <MultipleLogin />
+                <MultipleLogin errors={errors} />
               ) : (
                 <div className="grid gap-3">
                   <Label htmlFor="email">Email</Label>

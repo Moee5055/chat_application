@@ -5,7 +5,7 @@ import axios from "axios";
 import { LoginForm as SignupForm } from "@/components/login-form";
 import { toast } from "sonner";
 
-import { type ActionResult, AuthSchema as SignupSchema } from "../utils";
+import { type ActionResult, SignupSchema } from "../utils";
 
 export let email = "";
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
